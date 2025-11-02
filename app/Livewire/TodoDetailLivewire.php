@@ -20,7 +20,10 @@ class TodoDetailLivewire extends Component
         $this->auth = Auth::user();
 
         $todo_id = request()->route('todo_id');
-        $targetTodo = Todo::where('id', $todo_id)->first();
+        // Pastikan todo ada dan dimiliki oleh user yang sedang login
+        $targetTodo = Todo::where('id', 'like', $todo_id)
+            ->where('user_id', $this->auth->id)
+            ->first();
         if (!$targetTodo) {
             return redirect()->route('app.home');
         }

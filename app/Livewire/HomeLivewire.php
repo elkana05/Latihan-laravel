@@ -58,7 +58,9 @@ class HomeLivewire extends Component
 
     public function prepareEditTodo($id)
     {
-        $todo = Todo::where('id', $id)->first();
+        // Pastikan todo milik user yang sedang login
+        $todo = Todo::where('id', $id)
+            ->where('user_id', $this->auth->id)->first();
         if (!$todo) {
             return;
         }
@@ -79,7 +81,9 @@ class HomeLivewire extends Component
             'editTodoDescription' => 'required|string',
         ]);
 
-        $todo = Todo::where('id', $this->editTodoId)->first();
+        // Pastikan todo milik user yang sedang login
+        $todo = Todo::where('id', $this->editTodoId)
+            ->where('user_id', $this->auth->id)->first();
         if (!$todo) {
             $this->addError('editTodoTitle', 'Data todo tidak tersedia.');
             return;
@@ -100,7 +104,9 @@ class HomeLivewire extends Component
 
     public function prepareDeleteTodo($id)
     {
-        $todo = Todo::where('id', $id)->first();
+        // Pastikan todo milik user yang sedang login
+        $todo = Todo::where('id', $id)
+            ->where('user_id', $this->auth->id)->first();
         if (!$todo) {
             return;
         }
@@ -117,7 +123,14 @@ class HomeLivewire extends Component
             return;
         }
 
-        Todo::destroy($this->deleteTodoId);
+        // Pastikan todo milik user yang sedang login sebelum menghapus
+        $todo = Todo::where('id', $this->deleteTodoId)
+            ->where('user_id', $this->auth->id)->first();
+
+        if ($todo) {
+            $todo->delete();
+        }
+
         $this->reset(['deleteTodoId', 'deleteTodoTitle', 'deleteTodoConfirmTitle']);
         $this->dispatch('closeModal', id: 'deleteTodoModal');
     }
