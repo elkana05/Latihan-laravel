@@ -12,7 +12,7 @@ class HomeLivewire extends Component
 
     public function mount()
     {
-        $this->auth = auth()->user();
+        $this->auth = Auth::user();
     }
 
     public function render()
